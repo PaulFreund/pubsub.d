@@ -1,0 +1,11 @@
+{
+	"name": "pubsub-d",
+	"description": "Publish/Subscribe implementation for D",
+	"homepage": "https://github.com/PaulFreund/pubsub.d",
+	"license": "Boost",
+	"authors": [
+		"Paul Freund"
+	],
+	
+	"targetType": "source"
+}
