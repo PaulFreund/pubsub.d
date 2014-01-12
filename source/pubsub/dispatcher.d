@@ -36,7 +36,7 @@ struct subscribe {
 }
 
 void publish(Args...)(Args args) {
-    static if(is(Args[0] == Dispatcher)) {
+    static if(IsOfType!(Dispatcher, Args[0])) {
         alias dispatcher = args[0];
         alias event = args[1];
         alias parameters = args[2..$];
@@ -81,11 +81,12 @@ public:
     }
 
     void callSubscribers(Args...)(string event, Args args) {
+
         import std.string : lastIndexOf;
         SubscriberList listeners;
 
         // Get wildcard listeners
-        int idxSeparator = event.lastIndexOf('.');
+        auto idxSeparator = event.lastIndexOf('.');
         if(idxSeparator != -1) {
             string eventWildcard = event[0..(idxSeparator+1)] ~ '*';
             if((eventWildcard in _subscribers) !is null)
@@ -102,9 +103,30 @@ public:
             foreach(listener; listeners) {
                 dg.ptr = listener.ptrData;
                 dg.funcptr = cast(void function(Object, Args)) listener.ptrFunc;
-                dg(cast(Object)(listener.object), args);
+                dg(listener.object, args);
             }
-        }
+        }  
+    }
+}
+
+//---------------------------------------------------------------------------------------------------
+
+template IsOfType(BASE, TYPE) {
+    private import std.typetuple : anySatisfy;
+    private import std.traits : BaseClassesTuple;
+
+    template isType(T) { 
+        enum isType = is(T==BASE); 
+    }
+
+    static if(isType!(TYPE)) { 
+        enum IsOfType = true;
+    }
+    else {
+        static if(anySatisfy!(isType, BaseClassesTuple!TYPE))
+            enum IsOfType = true;
+        else
+            enum IsOfType = false;
     }
 }
 
