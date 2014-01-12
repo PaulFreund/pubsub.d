@@ -84,13 +84,18 @@ public:
 
         import std.string : lastIndexOf;
         SubscriberList listeners;
+        if(("*" in _subscribers) !is null)
+            listeners = _subscribers["*"];
 
         // Get wildcard listeners
-        auto idxSeparator = event.lastIndexOf('.');
-        if(idxSeparator != -1) {
-            string eventWildcard = event[0..(idxSeparator+1)] ~ '*';
+        auto idxSeparator = -1;
+        string eventString = event;
+        while((idxSeparator = eventString.lastIndexOf('.')) != -1) {
+            string eventSubString = eventString[0..idxSeparator];
+            string eventWildcard = eventSubString ~ ".*";
             if((eventWildcard in _subscribers) !is null)
                 listeners ~= _subscribers[eventWildcard];
+            eventString = eventSubString;
         }
 
         // Get direct listeners
