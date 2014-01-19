@@ -2,7 +2,7 @@
 	"name": "pubsub-d",
 	"description": "Publish/Subscribe implementation for D",
 	"homepage": "https://github.com/PaulFreund/pubsub.d",
-	"license": "Boost",
+	"license": "BSL-1.0",
 	"authors": [
 		"Paul Freund"
 	],
